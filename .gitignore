@@ -6,6 +6,6 @@
 *.swp
 Thumbs.db
 
-*/CVS
+*/CVS/*
 /.idea/*
 /.idea
