@@ -88,6 +88,9 @@ select option:first-child {
     text-transform: uppercase;
     font-weight: 600;
 }
+.btn:focus {
+    background-color: #032CA6 !important;
+}
 .btn:hover {
     background-color: #021859;
 }
@@ -198,6 +201,19 @@ body {
 /*
  * Time Slot Layout
  */
+.booking-wrapper {
+    margin: 0 auto;
+    margin-bottom: 50px;
+    background-color: #fff;
+    width: 1000px;
+    max-width: 1000px;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 3px 15px rgba(51, 51, 51, 0.2);
+}
+span.facility-name {
+    font-weight: 600;
+}
 table.timeSlotLayout ,.timeSlotLayout td,.timeSlotLayout th{
     font-family: Arial, Helvetica, Tahoma, Verdana, sans-serif;
     border: solid 1px silver;
@@ -217,24 +233,39 @@ table.timeSlotLayout {
 .timeSlotLayout td {
     font-size: 12px;
     border: 2px solid #fff;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-left: 0px;
-    padding-right: 0px;
+    padding: 10px 20px;
     text-align:left;
-    height:40px;
+    height: 50px;
+}
+.timeSlotLayout td.slot {
+    background-color:white;
+    font-weight:900;
+    text-align:right;
+    font-size:12px;
+    vertical-align:top;
+    padding: 0 10px;
 }
 .timeSlotLayout tbody {
     height: 20px;
     background-color: #f0f0f0;
 }
-
-.visualAffordance:hover {
-    background-color: #fdc81e;
+.visualAffordance {
+    color: transparent;
+}
+.visualAffordance:before {
+    content: "+";
+    font-size: 20px;
+    text-align: center;
+    width: 100%;
+    display: block;
+}
+.visualAffordance:not(.slotBooked):hover {
+    background-color: #032CA6;
+    color: #fff;
 }
 
 .selected{
-    background-color: #fdc81e;
+    /*background-color: #032CA6;*/
     border:3px #757575 solid !important;
 }
 #tabContentDiv{
@@ -243,12 +274,17 @@ table.timeSlotLayout {
     border-bottom:1px solid #ddd;
 }
 li.active > a[role=tab]{
-    color:#df0000 !important;
+    color: #032CA6 !important;
+    font-size: 18px;
     font-weight:bold;
     cursor:pointer !important;
 }
 .slotBooked{
-    background-color:#f5eac3 !important;
-    color:#d17f15;
+    background-color: #f1dee6 !important;
+    color: #b91360;
     font-weight:bold;
+    cursor: initial !important;
+}
+.slotBooked.visualAffordance:before {
+    content: "";
 }

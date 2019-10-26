@@ -9,15 +9,13 @@
 	<link rel="stylesheet" type="text/css"href="css/style.css" />
 </head>
 
-<body style="margin-left:10px;padding-top:20px;line-height:normal;">
-	<h3 style="font-weight: bold;font-size:17px;display:inline-block;margin-bottom:10px;">Facility Booking System</h3>
-	<hr style="border-color: #b5b5b5;margin-bottom:20px;margin-top:0px;">
-	<div style="width:100%;text-align:center;">
-		<table style="display:inline-block;">
+<body>
+	<div class="booking-wrapper">
+		<table style="display: inline-block">
 			<tr>
 				<td>
 					<!-- ALIGNED LAYOUT -->
-					<div id="tabsDiv" style="width:800px;display:none;" data-bind="visible:layout()=='ALIGNED_TIMESLOT' ">
+					<div id="tabsDiv" style="width:900px;display:none;" data-bind="visible:layout()=='ALIGNED_TIMESLOT' ">
 						  <!-- Nav tabs -->
 						  <ul id="myTabs" class="nav nav-tabs" role="tablist" data-bind="foreach:lstDisplayDates">
 						  		<li role="presentation" ><a href="#timeslot_tab" role="tab" data-toggle="tab" data-bind="text:$data"></a></li>
@@ -26,14 +24,14 @@
 				     	 <!-- Tab panes -->
 						 <div id="tabContentDiv" class="tab-content">
 						 	<div role="tabpanel" class="tab-pane active" id="timeslot_tab">
-						 		<div id="alignedTimeSlotDiv" style="overflow-y:scroll;overflow-x:hidden;height:500px;">
+						 		<div id="alignedTimeSlotDiv">
 							    	<table id="alignedTimeSlotTable" class=timeSlotLayout>
 										<thead>
 											<tr>
-												<th style="width:200px;background-color:white;"></th>
+												<th style="width:100px;background-color:white;"></th>
 												<!-- ko foreach:rooms -->
-													<th style="font-weight:bold;width:200px;">
-														<span data-bind="text:name"></span><br>
+													<th style="font-weight:bold;width:230px;font-size: 15px;">
+														<span data-bind="text:name" class="facility-name"></span><br>
 														<span data-bind="text:location"></span><br>
 														<span data-bind="text:'(for '+capacity+' pax)'"></span>
 													</th>
@@ -42,12 +40,12 @@
 										</thead>
 										<tbody data-bind="foreach:lstAlignedTimeSlotLayout">
 											<tr>
-												<td data-bind="text:slot" style="background-color:white;font-weight:900;text-align:right;font-size:9px;vertical-align:top;"></td>
+												<td data-bind="text:slot" class="slot"></td>
 												<!-- ko foreach : events -->
-													<td style="padding-top:0px;padding-left:10px;" 
+													<td
 															data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance},
 															style:{cursor:($root.visualAffordance()?'pointer':'')},
-															text:(bookStatus?'Booked':''), click: $root.alignedTimeSlotClicked "></td>
+															text:(bookStatus?'Not available':''), click: $root.alignedTimeSlotClicked "></td>
 												<!-- /ko -->
 											</tr>
 										</tbody>
@@ -61,20 +59,20 @@
   		
   					<!-- NOT ALIGNED LAYOUT -->
 			  		<div style="display:none;" data-bind="visible:layout()=='NOTALIGNED_TIMESLOT' ">
-				  		<div id="notAlignedTimeSlotDiv" style="overflow-y:scroll;overflow-x:hidden;height:550px;">
+				  		<div id="notAlignedTimeSlotDiv">
 							<table id="notAlignedTimeSlotTable" class="timeSlotLayout" style="min-width:600px">
 								<thead>
 									<tr>
 										<th></th>
 										<!-- ko foreach:lstDisplayDates-->
-											<th style="font-weight:bold;width:200px;" data-bind="text:$data"></th>
+											<th style="font-weight:bold;width:200px;font-size: 15px;" data-bind="text:$data"></th>
 										<!-- /ko -->
 									</tr>
 								</thead>
 								<tbody data-bind="foreach:lstNotAlignedTimeSlotLayout">
 									<tr>
-										<td data-bind="with:room" style="font-weight:bold;padding-top:10px;padding-left:10px;padding-right:20px;vertical-align:top;">
-											<span data-bind="text:name"></span><br>
+										<td data-bind="with:room" style="font-weight:bold;padding-top:10px;padding-left:10px;padding-right:20px;vertical-align:top;font-size: 15px;">
+											<span data-bind="text:name" class="facility-name"></span><br>
 											<span data-bind="text:location"></span><br>
 											<span data-bind="text:'(for '+capacity+' pax)'"></span>
 										</td>
@@ -99,8 +97,7 @@
   			</tr>
   			<tr>
   				<td style="text-align:right;padding-top:15px;padding-right:5px;">
-		  			<button type='button' class='btn btn-danger btn-s' style='width:150px;border-radius:0px;
-							background-color:#cb0023;color:#fff;font-weight:normal;'
+		  			<button type='button' class='btn btn-danger btn-s' style='display: none;'
 							data-bind="click:confirmBooking">Confirm Booking</button>  
 				</td>
 			</tr>		
