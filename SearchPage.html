@@ -8,6 +8,7 @@
 	<link rel="stylesheet" type="text/css"href="css/bootstrap.css" />
 	<link rel="stylesheet" type="text/css"href="css/style.css" />
 	<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
+	<script src="./js/logging.js"></script>
 </head>
 
 <body>
@@ -171,8 +172,17 @@
 					//verify selections
 					var selectedFacility= $("#facilityCombo").jqxComboBox('getSelectedItem');
 					if(!selectedFacility){
+						loggingjs.logEvent(null, 'Submit search', {
+							eventName: 'Submit search unsuccessful',
+							info: {'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken}
+						});
 						alert("Please select a facility.");
 						return;
+					} else {
+						loggingjs.logEvent(null, 'Submit search', {
+							eventName: 'Submit search successful',
+							info: {'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken}
+						});
 					}
 					selectedFacility = selectedFacility.value
 					
@@ -233,6 +243,7 @@
 			 var viewModel = new ViewModel();
 		     ko.applyBindings(viewModel);
 		});
+
 	</script>
 	
 </body>
