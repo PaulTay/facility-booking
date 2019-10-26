@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Booking System</title>
+	<link rel="stylesheet" type="text/css"href="css/jquery_smoothness/jquery-ui-1.11.1.css">
+	<link rel="stylesheet" type="text/css" href="jqwidgets/3_3/css/jqx.base.css"/>
+	<link rel="stylesheet" type="text/css"href="css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css"href="css/style.css" />
+</head>
+
+<body style="margin-left:10px;padding-top:0px;line-height:normal;">
+
+	<h3 style="font-weight: bold;font-size:17px;display:inline-block;margin-bottom:10px;">UTown Facility Booking System</h3>
+	<hr style="border-color: #b5b5b5;margin-bottom:8px;margin-top:0px;">
+	
+	<div style="width:100%;text-align:center;">
+	   <div class="panel panel-warning" style="width:450px;margin-top:20px;display:inline-block;text-align:left;border-color:#ecb100;">
+			<div class='panel-heading' style="font-size:15px; height:42px;font-weight: bold;background-color:#ffc107;color:black;">Search Facility</div>
+			<div style="padding:10px;">
+				<table class=searchTable style="width: 100%;">
+					<tr>
+						<td style="width:120px;">Facility Type</td>
+						<td>: <div id="facilityCombo" style="display:inline-block;vertical-align:middle;margin-left:10px;"
+								data-bind="jqxComboBox:{source: facilitySource, 
+								dropDownHeight:200,searchMode:'containsignorecase',height:20,width:220,autoComplete:true}, click:trackClick"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>Capacity</td>
+	 					<td>: <select style="display:inline-block;vertical-align:middle;width:220px;height:25px;margin-left:10px;"
+							data-bind="options: capacitySource, optionsCaption:'Select Capacity', value: selectedCapacity, click:trackClick"></select>
+						</td>
+					</tr>
+					<tr style="display:none;" data-bind="visible:numOfInputs()==3">
+						<td>Date</td>
+						<td>: <input type='text' id='dateInput' readonly style="width:150px;height:25px;margin-left:10px;border:1px #9c9c9c solid;" data-bind="click:trackClick"/></td>
+					</tr>
+					<tr style="display:none;" data-bind="visible:numOfInputs()==6">
+						<td>Date From</td>
+						<td>: <input type='text' id='dateFrom' readonly style="width:150px;height:25px;margin-left:10px;border:1px #9c9c9c solid;" data-bind="click:trackClick"/></td>
+					</tr>
+					<tr style="display:none;" data-bind="visible:numOfInputs()==6">
+						<td>Date To</td>
+						<td>: <input type='text' id='dateTo' readonly style="width:150px;height:25px;margin-left:10px;border:1px #9c9c9c solid;" data-bind="click:trackClick"/></td>
+					</tr>
+					<tr style="display:none;" data-bind="visible:numOfInputs()==6">
+						<td>Timeslot From</td>
+						<td>: <select style="display:inline-block;vertical-align:middle;width:150px;height:25px;margin-left:10px;"
+							data-bind="options: timeSlotSource, optionsCaption:'', value: selectedTimeSlotFrom, click:trackClick"></select></td>
+					</tr>
+					<tr style="display:none;" data-bind="visible:numOfInputs()==6">
+						<td>Timeslot To</td>
+						<td>: <select style="display:inline-block;vertical-align:middle;width:150px;height:25px;margin-left:10px;"
+							data-bind="options: timeSlotSource, optionsCaption:'', value: selectedTimeSlotTo, click:trackClick"></select></td>
+					</tr>
+					<tr>
+						<td colspan=5 style="text-align:right;padding-top: 20px;padding-right: 20px;"> 
+								<button type='button' class='btn btn-warning btn-s' style='width:100px;margin-right:0px;
+									background-color:#ffc107;border-color:#383838;color:black;font-weight:bold;'
+									 data-bind="click:searchButton">Search</button>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>	
+	 </div>   		
+	     	
+
+
+	<script src="./js/jquery-1.11.1.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/jquery-ui-1.11.1.min.js"></script>
+	<script src="./js/jquery.cookie.js"></script>
+	<script src="./js/jquery.floatThead.js"></script>
+
+	<script src="./js/json2.js"></script>
+	<script src="./js/date.js"></script>
+	<script src="./js/yms.js"></script>
+	<script src="./js/underscore-min.js"></script>
+	<script src="./js/knockout-3.2.0.js"></script>
+	<script src="./js/globalconstants.js"></script>
+
+	<script src="./jqwidgets/3_3/js/jqxcore.js"></script>
+	<script src="./jqwidgets/3_3/js/jqxknockout.js"></script>
+	<script src="./jqwidgets/3_3/js/jqxbuttons.js"></script>
+	<script src="./jqwidgets/3_3/js/jqxscrollbar.js"></script>
+	<script src="./jqwidgets/3_3/js/jqxlistbox.js"></script>
+	<script src="./jqwidgets/3_3/js/jqxcombobox.js"></script>
+	
+	
+	<script>
+		$(function() {
+			
+			// http://localhost:8080/HCI_Project/SearchPage.html?layoutID=1&arrangementID=1&conditionID=1&trialID=1
+			var queryParams = new URLSearchParams(window.location.search);
+			var layoutID=parseInt(queryParams.get("layoutID"));
+			var arrangementID=parseInt(queryParams.get("arrangementID"));
+			var conditionID=parseInt(queryParams.get("conditionID"));
+			var trialID=parseInt(queryParams.get("trialID"));
+			
+			//verify parameters
+			if(isNaN(layoutID) || layoutID<1 || layoutID>2){
+				console.log(layoutID);
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-2
+			}
+			if(isNaN(arrangementID) || arrangementID<1 || arrangementID>4){
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-4
+			}
+			if(isNaN(conditionID) || conditionID<1 || conditionID>4){
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-4
+			}
+			if(isNaN(trialID) || trialID<1 || trialID>3){
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-3
+			}
+			
+			
+			var ViewModel = function() {
+				var self = this;
+				var selectedArrangement = GLOBAL_ARRANGEMENTS[arrangementID-1];
+				var selectedCondition = selectedArrangement[conditionID-1];
+				var numOfInputs = selectedCondition['numOfInputs'];
+				
+				self.numOfInputs=ko.observable(numOfInputs);
+				self.facilitySource = ko.observableArray(GLOBAL_FACILITIES);
+				self.capacitySource = ko.observableArray(GLOBAL_CAPACITY);
+				self.timeSlotSource = ko.observableArray(GLOBAL_TIMESLOTS);
+				self.selectedCapacity = ko.observable();
+				self.selectedTimeSlotFrom = ko.observable();
+				self.selectedTimeSlotTo = ko.observable()
+	
+				$('#dateInput').datepicker({dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE});
+		 		$('#dateInput').datepicker('setDate', GLOBAL_STARTDATE);
+	
+		 		$('#dateFrom').datepicker({dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE});
+		 		$('#dateFrom').datepicker('setDate', GLOBAL_STARTDATE);
+		 		
+				$('#dateTo').datepicker({dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE});
+			    $('#dateTo').datepicker('setDate', GLOBAL_ENDDATE);
+			    
+			    
+			    // Must save to logging js
+			    var numOfClicks = 0;
+				var startTime = new Date().getTime();
+				self.searchButton = function(){
+					var endTime = new Date().getTime();
+					var totalTimeTaken = Math.round((endTime - startTime)/1000);
+					console.log(totalTimeTaken+" sec");
+					console.log(numOfClicks+" clicks");
+					
+					//verify selections
+					var selectedFacility= $("#facilityCombo").jqxComboBox('getSelectedItem');
+					if(!selectedFacility){
+						alert("Please select a facility.");
+						return;
+					}
+					selectedFacility = selectedFacility.value
+					
+					var selectedCapacity = self.selectedCapacity();
+					if(!selectedCapacity){
+						alert("Please select a capacity.");
+						return;
+					}
+					
+					var selectedDateInput=null;
+					if(self.numOfInputs()==3){
+						selectedDateInput=$("#dateInput").val().trim();
+						
+					}
+					
+					var selectedDateFrom=null;
+					var selectedDateTo=null;
+					var selectedTimeSlotFrom=null;
+					var selectedTimeSlotTo=null;
+					if(self.numOfInputs()==6){
+						var selectedDateFrom=$("#dateFrom").val().trim();
+						var selectedDateTo=$("#dateTo").val().trim();
+						var parsedDateFrom=Date.parseExact(selectedDateFrom, "yyyy-MM-dd");
+						var parsedDateTo=Date.parseExact(selectedDateTo, "yyyy-MM-dd");
+						if( parsedDateTo < parsedDateFrom){
+							alert("Invalid Date selection.\n\"Date From\" must be earlier or equals to \"Date To\".");
+							return;
+						}
+						
+						var selectedTimeSlotFrom = self.selectedTimeSlotFrom();
+						var selectedTimeSlotTo = self.selectedTimeSlotTo();
+						if(!selectedTimeSlotFrom || !selectedTimeSlotFrom ){
+							alert("Please select both time slots.");
+							return;
+						}
+						if(parseInt(selectedTimeSlotTo) <= parseInt(selectedTimeSlotFrom)){
+							alert("Invalid Timeslot selection.\n\"Timeslot From\" must be earlier than \"Timeslot To\".");
+							return;
+						}
+					}
+					
+					var searchObject = {"facility":selectedFacility, "capacity":selectedCapacity,
+							"dateInput":selectedDateInput, "dateFrom":selectedDateFrom, "dateTo":selectedDateTo,
+							"timeslotFrom":selectedTimeSlotFrom, "timeslotTo":selectedTimeSlotTo};
+					localStorage.removeItem("searchObject");
+					localStorage.setItem("searchObject", JSON.stringify(searchObject));	
+					
+					var paramObj = {'layoutID': layoutID, 'arrangementID': arrangementID,'conditionID': conditionID, 'trialID': trialID};
+					window.open("./BookingPage.html?"+$.param(paramObj), 'BookingPage');
+				};
+
+				self.trackClick=function(){
+					console.log("clicked");
+					numOfClicks++;
+				}; 
+			};
+			
+			 var viewModel = new ViewModel();
+		     ko.applyBindings(viewModel);
+		});
+	</script>
+	
+</body>
+</html>

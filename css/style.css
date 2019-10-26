@@ -1,0 +1,65 @@
+/*
+ * Search Form
+ */
+.searchTable td {
+    font-size: 14px;
+    padding: 5px;
+}
+
+/*
+ * Time Slot Layout
+ */
+table.timeSlotLayout ,.timeSlotLayout td,.timeSlotLayout th{
+    font-family: Arial, Helvetica, Tahoma, Verdana, sans-serif;
+    border: solid 1px silver;
+}
+table.timeSlotLayout {
+    white-space: nowrap;
+    border-collapse: collapse;
+}
+.timeSlotLayout th{
+    font-size: 11px;
+    background-color: #e5e5e5;
+    color: black;
+    border: 2px solid #fff;
+    padding: 10px;
+    text-align:left;
+}
+.timeSlotLayout td {
+    font-size: 12px;
+    border: 2px solid #fff;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    text-align:left;
+    height:40px;
+}
+.timeSlotLayout tbody {
+    height: 20px;
+    background-color: #f0f0f0;
+}
+
+.visualAffordance:hover {
+    background-color: #fdc81e;
+}
+
+.selected{
+    background-color: #fdc81e;
+    border:3px #757575 solid !important;
+}
+#tabContentDiv{
+    border-left:1px solid #ddd;
+    border-right:1px solid #ddd;
+    border-bottom:1px solid #ddd;
+}
+li.active > a[role=tab]{
+    color:#df0000 !important;
+    font-weight:bold;
+    cursor:pointer !important;
+}
+.slotBooked{
+    background-color:#f5eac3 !important;
+    color:#d17f15;
+    font-weight:bold;
+}

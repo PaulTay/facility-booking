@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Facility Booking System</title>
+	<link rel="stylesheet" type="text/css"href="css/jquery_smoothness/jquery-ui-1.11.1.css">
+	<link rel="stylesheet" type="text/css" href="jqwidgets/3_3/css/jqx.base.css"/>
+	<link rel="stylesheet" type="text/css"href="css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css"href="css/style.css" />
+</head>
+
+<body style="margin-left:10px;padding-top:20px;line-height:normal;">
+	<h3 style="font-weight: bold;font-size:17px;display:inline-block;margin-bottom:10px;">Facility Booking System</h3>
+	<hr style="border-color: #b5b5b5;margin-bottom:20px;margin-top:0px;">
+	<div style="width:100%;text-align:center;">
+		<table style="display:inline-block;">
+			<tr>
+				<td>
+					<!-- ALIGNED LAYOUT -->
+					<div id="tabsDiv" style="width:800px;display:none;" data-bind="visible:layout()=='ALIGNED_TIMESLOT' ">
+						  <!-- Nav tabs -->
+						  <ul id="myTabs" class="nav nav-tabs" role="tablist" data-bind="foreach:lstDisplayDates">
+						  		<li role="presentation" ><a href="#timeslot_tab" role="tab" data-toggle="tab" data-bind="text:$data"></a></li>
+						  </ul>
+				     	
+				     	 <!-- Tab panes -->
+						 <div id="tabContentDiv" class="tab-content">
+						 	<div role="tabpanel" class="tab-pane active" id="timeslot_tab">
+						 		<div id="alignedTimeSlotDiv" style="overflow-y:scroll;overflow-x:hidden;height:500px;">
+							    	<table id="alignedTimeSlotTable" class=timeSlotLayout>
+										<thead>
+											<tr>
+												<th style="width:200px;background-color:white;"></th>
+												<!-- ko foreach:rooms -->
+													<th style="font-weight:bold;width:200px;">
+														<span data-bind="text:name"></span><br>
+														<span data-bind="text:location"></span><br>
+														<span data-bind="text:'(for '+capacity+' pax)'"></span>
+													</th>
+												<!-- /ko -->
+											</tr>
+										</thead>
+										<tbody data-bind="foreach:lstAlignedTimeSlotLayout">
+											<tr>
+												<td data-bind="text:slot" style="background-color:white;font-weight:900;text-align:right;font-size:9px;vertical-align:top;"></td>
+												<!-- ko foreach : events -->
+													<td style="padding-top:0px;padding-left:10px;" 
+															data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance},
+															style:{cursor:($root.visualAffordance()?'pointer':'')},
+															text:(bookStatus?'Booked':''), click: $root.alignedTimeSlotClicked "></td>
+												<!-- /ko -->
+											</tr>
+										</tbody>
+									</table>
+						 		</div>
+						 	</div>
+						 </div>	
+			  		</div>
+
+
+  		
+  					<!-- NOT ALIGNED LAYOUT -->
+			  		<div style="display:none;" data-bind="visible:layout()=='NOTALIGNED_TIMESLOT' ">
+				  		<div id="notAlignedTimeSlotDiv" style="overflow-y:scroll;overflow-x:hidden;height:550px;">
+							<table id="notAlignedTimeSlotTable" class="timeSlotLayout" style="min-width:600px">
+								<thead>
+									<tr>
+										<th></th>
+										<!-- ko foreach:lstDisplayDates-->
+											<th style="font-weight:bold;width:200px;" data-bind="text:$data"></th>
+										<!-- /ko -->
+									</tr>
+								</thead>
+								<tbody data-bind="foreach:lstNotAlignedTimeSlotLayout">
+									<tr>
+										<td data-bind="with:room" style="font-weight:bold;padding-top:10px;padding-left:10px;padding-right:20px;vertical-align:top;">
+											<span data-bind="text:name"></span><br>
+											<span data-bind="text:location"></span><br>
+											<span data-bind="text:'(for '+capacity+' pax)'"></span>
+										</td>
+										
+										<!-- ko foreach: events-->
+											<td style="vertical-align:top;text-align:center;">
+												<!-- ko foreach: $data -->
+													<div style="padding-top:10px;padding-bottom:10px;border:1px black solid;white-space:pre;"
+														data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance}, 
+														style:{cursor:($root.visualAffordance()?'pointer':'')},
+														text:(bookStatus?'Booked':'Available')+'\n'+ '('+firstSlot+'-'+lastSlot+')', click:$root.notAlignedTimeSlotClicked" >
+													</div>
+												<!-- /ko -->
+											</td>
+										<!-- /ko -->
+									</tr>
+								</tbody>
+							</table>
+					    </div>	
+		  			</div>	
+	  			</td>
+  			</tr>
+  			<tr>
+  				<td style="text-align:right;padding-top:15px;padding-right:5px;">
+		  			<button type='button' class='btn btn-danger btn-s' style='width:150px;border-radius:0px;
+							background-color:#cb0023;color:#fff;font-weight:normal;'
+							data-bind="click:confirmBooking">Confirm Booking</button>  
+				</td>
+			</tr>		
+  		 </table> 		
+	</div>
+
+
+ 	<script src="./js/jquery-1.11.1.min.js"></script>
+	<script src="./js/bootstrap.min.js"></script>
+	<script src="./js/jquery-ui-1.11.1.min.js"></script>
+	<script src="./js/jquery.cookie.js"></script>
+	<script src="./js/jquery.floatThead.js"></script>
+
+	<script src="./js/json2.js"></script>
+	<script src="./js/date.js"></script>
+	<script src="./js/yms.js"></script>
+	<script src="./js/underscore-min.js"></script>
+	<script src="./js/knockout-3.2.0.js"></script>
+	<script src="./js/globalconstants.js"></script>
+
+	
+	<script>
+		$(function() {
+			
+			// http://localhost:8080/HCI_Project/BookingPage.html?layoutID=1&arrangementID=1&conditionID=1&trialID=1
+			var queryParams = new URLSearchParams(window.location.search);
+			var layoutID=parseInt(queryParams.get("layoutID"));
+			var arrangementID=parseInt(queryParams.get("arrangementID"));
+			var conditionID=parseInt(queryParams.get("conditionID"));
+			var trialID=parseInt(queryParams.get("trialID"));
+			
+			//verify parameters
+			if(isNaN(layoutID) || layoutID<1 || layoutID>2){
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-2
+			}
+			if(isNaN(arrangementID) || arrangementID<1 || arrangementID>4){
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-4
+			}
+			if(isNaN(conditionID) || conditionID<1 || conditionID>4){
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-4
+			}
+			if(isNaN(trialID) || trialID<1 || trialID>3){
+				return;  // invalid number, don't allow to proceed. Acceptable range 1-3
+			}
+			
+			
+			
+			var ViewModel = function() {
+				var self = this;
+				var selectedLayout = GLOBAL_LAYOUTS[layoutID-1];
+				var selectedArrangement = GLOBAL_ARRANGEMENTS[arrangementID-1];
+				var selectedCondition = selectedArrangement[conditionID-1];
+				var numOfInputs = selectedCondition['numOfInputs'];
+				var visualAffordance = selectedCondition['visualAffordance'];
+				var selectedTrial = GLOBAL_TRIALS[trialID-1]; // {"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"11:00"}
+				var completionCode = GLOBAL_COMPLETION_CODES[conditionID+"_"+trialID];
+
+				
+				self.layout = ko.observable(selectedLayout);
+				self.visualAffordance = ko.observable(visualAffordance);
+				self.lstNotAlignedTimeSlotLayout = ko.observableArray();
+				self.lstAlignedTimeSlotLayout = ko.observableArray();
+
+				var searchObject = JSON.parse(localStorage.getItem("searchObject"));
+				var facility = searchObject['facility'];
+				var capacity = searchObject['capacity'];
+				var dateInput = searchObject['dateInput'];
+				var dateFrom = searchObject['dateFrom'];
+				var dateTo = searchObject['dateTo'];
+				var timeslotFrom = searchObject['timeslotFrom'];
+				var timeslotTo = searchObject['timeslotTo'];
+				
+ 				console.log(searchObject);
+				self.rooms = ko.observableArray();
+				self.lstDisplayDates=ko.observableArray();
+				self.timeSlot = ko.observableArray();
+				
+				var rooms = [];
+				var rawRooms = GLOBAL_ROOMS[facility+"_"+capacity];
+				for(var i=0; i<rawRooms.length; i++){
+					var location = "#0"+(facility=="Conference Room"?1:2)+"-10"+(i+1);
+					var roomObj={'name':rawRooms[i],'facility':facility,'capacity':capacity,'location':location};
+					rooms.push(roomObj);
+				}
+				self.rooms(rooms);
+
+				var days = ['Sun','Mon','Tue','Wed','Thurs','Fri','Sat'];
+				var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+				var dayStart = null;
+				var displayAndRealDateMap = {};
+				if(numOfInputs==3){
+					var parsedDateInput=Date.parseExact(dateInput, "yyyy-MM-dd");
+					var date = parsedDateInput.getDate();
+					var day = days[parsedDateInput.getDay()];
+					var month = months[parsedDateInput.getMonth()];
+					var displayDate = day+", "+date+" "+month;
+					self.lstDisplayDates([displayDate]);
+					self.timeSlot(GLOBAL_TIMESLOTS);
+					dayStart = parsedDateInput.getDay();
+					displayAndRealDateMap[displayDate] = dateInput;
+				}else if(numOfInputs==6){
+					var parsedDateFrom=Date.parseExact(dateFrom, "yyyy-MM-dd");
+					var parsedDateTo=Date.parseExact(dateTo, "yyyy-MM-dd");
+					var diffTime = Math.abs(parsedDateTo - parsedDateFrom);
+					var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+					dayStart = parsedDateFrom.getDay();
+
+					
+					var lstDisplayDates = [];
+					for(var i=0;i<=diffDays;i++){
+						var newDate = new Date(parsedDateFrom);
+						newDate.setDate(newDate.getDate() + i);
+						
+						var date = newDate.getDate();
+						var day = days[newDate.getDay()];
+						var month = months[newDate.getMonth()];
+						var displayDate = day+", "+date+" "+month;
+						lstDisplayDates.push(displayDate);
+						displayAndRealDateMap[displayDate] = newDate.toString('yyyy-MM-dd');
+					}
+					self.lstDisplayDates(lstDisplayDates);
+					self.timeSlot(GLOBAL_TIMESLOTS.slice(GLOBAL_TIMESLOTS.indexOf(timeslotFrom),GLOBAL_TIMESLOTS.indexOf(timeslotTo)+1));
+				}
+				
+				$('#notAlignedTimeSlotTable').floatThead({
+	   				scrollContainer: function($table){
+	      			  return $table.closest('#notAlignedTimeSlotDiv');
+	   				},zIndex:100
+				});
+				
+				$('#alignedTimeSlotTable').floatThead({
+	   				scrollContainer: function($table){
+	      			  return $table.closest('#alignedTimeSlotDiv');
+	   				},zIndex:100
+				});
+	
+				self.currentDate=ko.observable();
+				$(document).on('shown.bs.tab','a[data-toggle="tab"]',function (e) {
+					var index = $(this).parent().index();
+					var value = $(e.target).text();
+					self.currentDate(value);
+					$(".selected").removeClass("selected");
+					$("#alignedTimeSlotDiv")[0].scrollTop=0;
+					self.lstAlignedTimeSlotLayout(alignedTimeSlotLayout[self.lstDisplayDates()[index]]);
+					$('#alignedTimeSlotTable').floatThead('reflow');
+				});
+				
+
+				
+				self.alignedTimeSlotClicked = function(value,e){
+					trackClick(e.target, value.bookStatus);
+					if(selectedTrial["date"]==displayAndRealDateMap[self.currentDate()] && selectedTrial["facility"]==value['room']['facility']
+							&& selectedTrial["capacity"]==value['room']['capacity']
+							&& value['slot']==selectedTrial["slot"]){
+						
+						//dialog box !!! and leads to completion
+						trialCompletion();
+					}
+				};
+				
+				self.notAlignedTimeSlotClicked = function(value,e){
+ 					trackClick(e.target,value.bookStatus);
+					if(selectedTrial["date"]==displayAndRealDateMap[value['date']] && selectedTrial["facility"]==value['room']['facility']
+							&& selectedTrial["capacity"]==value['room']['capacity']
+							&& parseInt(value['firstSlot'])<=parseInt(selectedTrial["slot"]) && parseInt(selectedTrial["slot"])<parseInt(value['lastSlot'])){
+						
+						//dialog box !!! and leads to completion
+						trialCompletion();
+					}
+				};
+	
+				var startTime = new Date().getTime();
+				function trialCompletion(){
+					var endTime = new Date().getTime();
+					var totalTimeTaken = Math.round((endTime - startTime)/1000);
+					console.log(totalTimeTaken+" sec");
+					console.log(numOfClicks+" clicks");
+					console.log("Completion Code:"+ completionCode);
+				}
+				
+				var numOfClicks = 0 ;
+				function trackClick(element, bookStatus){
+					if($(element).hasClass("selected")){
+						$(element).removeClass("selected");
+					}else{
+						if(!bookStatus){ //booked
+							$(".selected").removeClass("selected");
+							$(element).addClass("selected");
+						}
+					}
+					numOfClicks++;
+				}
+				
+				
+				
+				
+				var startTime = new Date().getTime();
+				self.confirmBooking = function(){
+					var endTime = new Date().getTime();
+					var totalTimeTaken = Math.round((endTime - startTime)/1000);
+					console.log(totalTimeTaken+" sec");
+					console.log(numOfClicks);
+					$(".selected").each(function(){
+						//console.log($(this));
+					});
+				};
+				
+
+				// build aligned time slot layout
+				function getAlignedTimeSlotLayout(){
+					var alignedTimeSlotLayout = {};
+					for(var i=0;i<self.lstDisplayDates().length;i++){
+						var currentDayEvents = GLOBAL_BOOKED_EVENTS[dayStart+i];
+						var timeSlotArray = [];
+						for(var j=0;j<self.timeSlot().length;j++){
+							var currentTimeSlot = self.timeSlot()[j];
+							var eventArray = [];
+							for(var k=0;k<self.rooms().length;k++){
+								var currentRoom = self.rooms()[k];
+								var lstBookedSlots = [];
+								if(currentDayEvents[k]!=null){
+									lstBookedSlots = currentDayEvents[k];
+								}
+								
+								var bookStatus = lstBookedSlots.includes(currentTimeSlot);
+								var eventObject = {'bookStatus':bookStatus,'slot':currentTimeSlot,'room':currentRoom};
+								eventArray.push(eventObject) 
+							}
+							timeSlotArray.push({'slot':currentTimeSlot,'events': (j==self.timeSlot().length-1)?[]:eventArray});
+						}	
+						alignedTimeSlotLayout[self.lstDisplayDates()[i]] = timeSlotArray;	
+					}
+					return alignedTimeSlotLayout;
+				}
+				
+				var alignedTimeSlotLayout=getAlignedTimeSlotLayout();
+				self.lstAlignedTimeSlotLayout(alignedTimeSlotLayout[self.lstDisplayDates()[0]]);
+				//console.log(self.lstAlignedTimeSlotLayout());
+				$('#alignedTimeSlotTable').floatThead('reflow');
+				
+				
+				
+				// build not aligned time slot layout
+				function getNotAlignedTimeSlotLayout(){
+					var lstNotAlignedTimeSlotLayout = [];
+					for(var i=0;i<self.rooms().length;i++){
+						var eventArray = [];
+						var currentRoom = self.rooms()[i];
+						
+						for(var j=0;j<self.lstDisplayDates().length;j++){
+							var finalTimeSlotArray = [];
+							var currentDayEvents = GLOBAL_BOOKED_EVENTS[dayStart+j];
+							var lstBookedSlots = [];
+							if(currentDayEvents[i]!=null){
+								lstBookedSlots = currentDayEvents[i];
+							}
+							
+							
+							var accumulatedSlots = [self.timeSlot()[0]];
+							for(var k=0;k<self.timeSlot().length-1;k++){
+								var currentTimeSlot = self.timeSlot()[k];
+								var nextTimeSlot = self.timeSlot()[k+1];
+								
+								var currentTimeSlotBooked = lstBookedSlots.includes(currentTimeSlot);
+								var nextTimeSlotBooked = lstBookedSlots.includes(nextTimeSlot);
+								
+								var isContinous = (currentTimeSlotBooked===nextTimeSlotBooked);
+								accumulatedSlots.push(nextTimeSlot);
+								
+								if(isContinous){
+									//no nothing
+								}else{
+									//cut off point
+									var firstSlot=accumulatedSlots[0];
+									var lastSlot=accumulatedSlots[accumulatedSlots.length-1];
+									var bookStatus = currentTimeSlotBooked;
+									var timeSlotObject = {"bookStatus":bookStatus,"firstSlot":firstSlot,"lastSlot":lastSlot,
+											'date':self.lstDisplayDates()[j],'room':currentRoom};
+									finalTimeSlotArray.push(timeSlotObject);
+									accumulatedSlots = [nextTimeSlot]; //reset
+								}
+							}
+							
+							if(accumulatedSlots.length>0){
+								var lastKnownTimeSlot=self.timeSlot()[self.timeSlot().length-1];
+								var firstSlot=accumulatedSlots[0];
+								var lastSlot=accumulatedSlots[accumulatedSlots.length-1];
+								var timeSlotObject = {"bookStatus":lstBookedSlots.includes(lastKnownTimeSlot),"firstSlot":firstSlot,"lastSlot":lastSlot,
+										'date':self.lstDisplayDates()[j],'room':currentRoom};
+								if(firstSlot!=lastSlot){
+									finalTimeSlotArray.push(timeSlotObject);
+								}
+							}
+							eventArray.push(finalTimeSlotArray);
+						}
+						lstNotAlignedTimeSlotLayout.push({'room':currentRoom,'events':eventArray});
+					}
+					return lstNotAlignedTimeSlotLayout;
+				}
+				
+				var lstNotAlignedTimeSlotLayout = getNotAlignedTimeSlotLayout()
+				self.lstNotAlignedTimeSlotLayout(lstNotAlignedTimeSlotLayout);
+				//console.log(self.lstNotAlignedTimeSlotLayout());
+				$('#notAlignedTimeSlotTable').floatThead('reflow');
+				
+				
+				
+				
+				
+				
+				
+				setTimeout(function(){
+					$("a[role=tab]").eq(0).click(); 
+				}, 200);
+	 		
+			};
+			
+			var viewModel = new ViewModel();
+		    ko.applyBindings(viewModel);
+		});
+		
+	</script>
+	
+</body>
+</html>
