@@ -25,8 +25,8 @@
 				     	 <!-- Tab panes -->
 						 <div id="tabContentDiv" class="tab-content">
 						 	<div role="tabpanel" class="tab-pane active" id="timeslot_tab">
-						 		<div id="alignedTimeSlotDiv">
-							    	<table id="alignedTimeSlotTable" class=timeSlotLayout>
+						 		<div id="alignedTimeSlotDiv" class="timeslot-wrapper">
+							    	<table id="alignedTimeSlotTable" class="timeSlotLayout">
 										<thead>
 											<tr>
 												<th style="width:100px;background-color:white;"></th>
@@ -43,10 +43,20 @@
 											<tr>
 												<td data-bind="text:slot" class="slot"></td>
 												<!-- ko foreach : events -->
-													<td
-															data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance},
-															style:{cursor:($root.visualAffordance()?'pointer':'')},
-															text:(bookStatus?'Not available':''), click: $root.alignedTimeSlotClicked "></td>
+
+													<!-- ko if: bookStatus -->
+													<td data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance}">Not available</td>
+													<!-- /ko -->
+
+													<!--data-toggle="modal" title="Select timeslot"-->
+
+													<!-- ko if: !bookStatus -->
+													<td	data-bind="modal: {template: 'modalTemplate', openModal: $root.openModal},
+														css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance},
+														style:{cursor:($root.visualAffordance()?'pointer':'')},
+														click: $root.alignedTimeSlotClicked"></td>
+													<!-- /ko -->
+
 												<!-- /ko -->
 											</tr>
 										</tbody>
@@ -60,7 +70,7 @@
   		
   					<!-- NOT ALIGNED LAYOUT -->
 			  		<div style="display:none;" data-bind="visible:layout()=='NOTALIGNED_TIMESLOT' ">
-				  		<div id="notAlignedTimeSlotDiv">
+				  		<div id="notAlignedTimeSlotDiv" class="timeslot-wrapper">
 							<table id="notAlignedTimeSlotTable" class="timeSlotLayout" style="min-width:600px">
 								<thead>
 									<tr>
@@ -79,12 +89,12 @@
 										</td>
 										
 										<!-- ko foreach: events-->
-											<td style="vertical-align:top;text-align:center;">
+											<td style="vertical-align:top;">
 												<!-- ko foreach: $data -->
-													<div style="padding-top:10px;padding-bottom:10px;border:1px black solid;white-space:pre;"
-														data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance}, 
+													<div class="timeslot-cell"
+														data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance},
 														style:{cursor:($root.visualAffordance()?'pointer':'')},
-														text:(bookStatus?'Booked':'Available')+'\n'+ '('+firstSlot+'-'+lastSlot+')', click:$root.notAlignedTimeSlotClicked" >
+														text:(bookStatus?'Not Available':'Available')+'\n'+ '('+firstSlot+'-'+lastSlot+')', click:$root.notAlignedTimeSlotClicked" >
 													</div>
 												<!-- /ko -->
 											</td>
@@ -105,6 +115,29 @@
   		 </table> 		
 	</div>
 
+	<!-- Modal -->
+	<!--<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true"
+		 data-bind="bsShowModal:modal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title" id="confirmeModalLabel" data-bind="text: modalHead"></h3>
+					<button type="button" class="close" aria-label="Close" data-bind="click:$root.hideModal">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<span data-bind="text: modalBody"></span> You are about to book at
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-hollow btn-lg"
+							data-bind="click:$root.hideModal">Close</button>
+					<button type="button" class="btn btn-primary btn-lg"
+							data-bind="click:confirmBooking">Confirm</button>
+				</div>
+			</div>
+		</div>
+	</div>-->
 
  	<script src="./js/jquery-1.11.1.min.js"></script>
 	<script src="./js/bootstrap.min.js"></script>
@@ -119,7 +152,8 @@
 	<script src="./js/knockout-3.2.0.js"></script>
 	<script src="./js/globalconstants.js"></script>
 
-	
+    <script src="./js/knockout-bootstrap.min.js"></script>
+
 	<script>
 		$(function() {
 			
@@ -144,8 +178,6 @@
 				return;  // invalid number, don't allow to proceed. Acceptable range 1-3
 			}
 			
-			
-			
 			var ViewModel = function() {
 				var self = this;
 				var selectedLayout = GLOBAL_LAYOUTS[layoutID-1];
@@ -155,7 +187,6 @@
 				var visualAffordance = selectedCondition['visualAffordance'];
 				var selectedTrial = GLOBAL_TRIALS[trialID-1]; // {"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"11:00"}
 				var completionCode = GLOBAL_COMPLETION_CODES[conditionID+"_"+trialID];
-
 				
 				self.layout = ko.observable(selectedLayout);
 				self.visualAffordance = ko.observable(visualAffordance);
@@ -175,7 +206,18 @@
 				self.rooms = ko.observableArray();
 				self.lstDisplayDates=ko.observableArray();
 				self.timeSlot = ko.observableArray();
-				
+
+				self.modalBindingHeader=ko.observable('Confirm your booking?');
+				self.modalBindingBody = ko.observable('Oops error...');
+				self.modalBindingTemp = ko.observable();
+
+				self.openModal = function() {
+					self.modalBindingTemp(self.modalBindingBody());
+				};
+				self.saveChange = function() {
+					self.modalBindingBody(self.modalBindingTemp());
+				};
+
 				var rooms = [];
 				var rawRooms = GLOBAL_ROOMS[facility+"_"+capacity];
 				for(var i=0; i<rawRooms.length; i++){
@@ -246,21 +288,23 @@
 					$('#alignedTimeSlotTable').floatThead('reflow');
 				});
 				
-
-				
 				self.alignedTimeSlotClicked = function(value,e){
-					trackClick(e.target, value.bookStatus);
+					self.trackClick();
+					console.log(value);
+					markTimeslotSelected(e.target, value.bookStatus);
 					if(selectedTrial["date"]==displayAndRealDateMap[self.currentDate()] && selectedTrial["facility"]==value['room']['facility']
 							&& selectedTrial["capacity"]==value['room']['capacity']
 							&& value['slot']==selectedTrial["slot"]){
 						
 						//dialog box !!! and leads to completion
+
 						trialCompletion();
 					}
 				};
 				
 				self.notAlignedTimeSlotClicked = function(value,e){
- 					trackClick(e.target,value.bookStatus);
+					self.trackClick();
+					markTimeslotSelected(e.target, value.bookStatus);
 					if(selectedTrial["date"]==displayAndRealDateMap[value['date']] && selectedTrial["facility"]==value['room']['facility']
 							&& selectedTrial["capacity"]==value['room']['capacity']
 							&& parseInt(value['firstSlot'])<=parseInt(selectedTrial["slot"]) && parseInt(selectedTrial["slot"])<parseInt(value['lastSlot'])){
@@ -280,20 +324,21 @@
 				}
 				
 				var numOfClicks = 0 ;
-				function trackClick(element, bookStatus){
-					if($(element).hasClass("selected")){
+				self.trackClick=function(){
+					numOfClicks++;
+					console.log("no. of clicks = " + numOfClicks);
+				};
+
+				function markTimeslotSelected(element, bookStatus){
+					if ($(element).hasClass("selected")) {
 						$(element).removeClass("selected");
-					}else{
-						if(!bookStatus){ //booked
+					} else {
+						if(!bookStatus) { //booked
 							$(".selected").removeClass("selected");
 							$(element).addClass("selected");
 						}
 					}
-					numOfClicks++;
 				}
-				
-				
-				
 				
 				var startTime = new Date().getTime();
 				self.confirmBooking = function(){
@@ -305,7 +350,6 @@
 						//console.log($(this));
 					});
 				};
-				
 
 				// build aligned time slot layout
 				function getAlignedTimeSlotLayout(){
@@ -338,9 +382,8 @@
 				self.lstAlignedTimeSlotLayout(alignedTimeSlotLayout[self.lstDisplayDates()[0]]);
 				//console.log(self.lstAlignedTimeSlotLayout());
 				$('#alignedTimeSlotTable').floatThead('reflow');
-				
-				
-				
+
+
 				// build not aligned time slot layout
 				function getNotAlignedTimeSlotLayout(){
 					var lstNotAlignedTimeSlotLayout = [];
@@ -403,13 +446,7 @@
 				self.lstNotAlignedTimeSlotLayout(lstNotAlignedTimeSlotLayout);
 				//console.log(self.lstNotAlignedTimeSlotLayout());
 				$('#notAlignedTimeSlotTable').floatThead('reflow');
-				
-				
-				
-				
-				
-				
-				
+
 				setTimeout(function(){
 					$("a[role=tab]").eq(0).click(); 
 				}, 200);
@@ -418,9 +455,40 @@
 			
 			var viewModel = new ViewModel();
 		    ko.applyBindings(viewModel);
+
 		});
 		
 	</script>
-	
+
+    <script type="text/html" id="modalTemplate">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Confirm your booking?</h3>
+                    <button type="button" class="close" aria-label="Close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+					You are about to book
+					<div class="bold">
+						<span data-bind="text: room.name"></span>, <span data-bind="text: room.location"></span> (<span data-bind="text: room.capacity"></span> pax)
+					</div>
+					at <span data-bind="text: slot"></span>.
+					<div class="completion-box">
+						<strong>Copy the completion code below</strong> and <br> paste it on the survey form
+						<div class="completion-code"><span>GERMANY</span></div>
+					</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-hollow btn-lg"
+                            data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-lg"
+                            data-bind="click:$root.confirmBooking">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </script>
+
 </body>
 </html>

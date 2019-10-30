@@ -94,8 +94,20 @@ select option:first-child {
 .btn:hover {
     background-color: #021859;
 }
+.btn-lg {
+    font-size: 13px;
+    line-height: 1.8;
+    padding: 10px 30px;
+}
 .btn-block {
     line-height: 2;
+}
+.btn-hollow {
+    background-color: transparent;
+    border: 1px solid #bcbdbd;
+}
+.btn-hollow:hover {
+    background-color: transparent;
 }
 
 .form-box label {
@@ -135,6 +147,20 @@ body {
     background-size: cover;
     padding-top: 5rem;
     position: relative;
+}
+.modal-title {
+    float: left;
+}
+.modal-header .close {
+    font-size: 25px;
+    padding: 5px 10px;
+}
+.modal-body {
+    font-size: 17px;
+    padding: 30px;
+}
+.bold, .modal-body span {
+    font-weight: 700;
 }
 
 /*
@@ -211,6 +237,11 @@ body {
     border-radius: 20px;
     box-shadow: 0 3px 15px rgba(51, 51, 51, 0.2);
 }
+.timeslot-wrapper {
+    overflow-y:scroll;
+    overflow-x:hidden;
+    height:720px;
+}
 span.facility-name {
     font-weight: 600;
 }
@@ -236,6 +267,15 @@ table.timeSlotLayout {
     padding: 10px 20px;
     text-align:left;
     height: 50px;
+    position: relative;
+}
+.timeslot-cell {
+    height: initial;
+    width: 200px;
+    min-height: 60px;
+    padding: 10px 20px 10px 20px;
+    white-space: pre;
+    border: 1px solid #ccc;
 }
 .timeSlotLayout td.slot {
     background-color:white;
@@ -254,14 +294,24 @@ table.timeSlotLayout {
 }
 .visualAffordance:before {
     content: "+";
-    font-size: 20px;
+    font-size: 25px;
     text-align: center;
-    width: 100%;
     display: block;
 }
 .visualAffordance:not(.slotBooked):hover {
     background-color: #032CA6;
     color: #fff;
+}
+.timeslot-cell.visualAffordance {
+    color: #333;
+}
+.timeslot-cell.visualAffordance:before {
+    position: absolute;
+    width: 160px;
+    text-align: right;
+    font-size: 25px;
+    padding-right: 5px;
+    padding-top: 2px;
 }
 
 .selected{
@@ -279,7 +329,7 @@ li.active > a[role=tab]{
     font-weight:bold;
     cursor:pointer !important;
 }
-.slotBooked{
+.slotBooked, .timeslot-cell.slotBooked {
     background-color: #f1dee6 !important;
     color: #b91360;
     font-weight:bold;
@@ -287,4 +337,20 @@ li.active > a[role=tab]{
 }
 .slotBooked.visualAffordance:before {
     content: "";
+}
+
+.completion-box {
+    margin: 30px 30px 0;
+    padding: 30px 40px;
+    background-color: #f6e8de;
+}
+.completion-code {
+    color: #031759;
+    font-size: 30px;
+    font-weight: 700;
+    padding: 20px;
+}
+.completion-code span {
+    border-bottom: 5px dashed #000;
+    border-bottom: 5px dashed #000;
 }
