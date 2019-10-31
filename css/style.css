@@ -145,7 +145,7 @@ body {
     background: url("../img/hero-bg.svg") no-repeat;
     background-position: center top;
     background-size: cover;
-    padding-top: 5rem;
+    padding-top: 12rem;
     position: relative;
 }
 .modal-title {
@@ -338,7 +338,6 @@ li.active > a[role=tab]{
 .slotBooked.visualAffordance:before {
     content: "";
 }
-
 .completion-box {
     margin: 30px 30px 0;
     padding: 30px 40px;
@@ -353,4 +352,15 @@ li.active > a[role=tab]{
 .completion-code span {
     border-bottom: 5px dashed #000;
     border-bottom: 5px dashed #000;
+}
+.topbar {
+    background-color: #fff;
+    display: block;
+    padding: 20px;
+    position: fixed;
+    width: 100%;
+    margin-bottom: 30px;
+    top: 0;
+    font-size: 16px;
+    color: #031759;
 }

@@ -11,6 +11,10 @@
 </head>
 
 <body>
+	<div class="topbar">
+		<p>Please complete the following task:</p>
+		Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit more than <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
+	</div>
 	<div class="booking-wrapper">
 		<table style="display: inline-block">
 			<tr>
@@ -47,8 +51,6 @@
 													<!-- ko if: bookStatus -->
 													<td data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance}">Not available</td>
 													<!-- /ko -->
-
-													<!--data-toggle="modal" title="Select timeslot"-->
 
 													<!-- ko if: !bookStatus -->
 													<td	data-bind="modal: {template: 'modalTemplate', openModal: $root.openModal},
@@ -115,30 +117,6 @@
   		 </table> 		
 	</div>
 
-	<!-- Modal -->
-	<!--<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true"
-		 data-bind="bsShowModal:modal">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h3 class="modal-title" id="confirmeModalLabel" data-bind="text: modalHead"></h3>
-					<button type="button" class="close" aria-label="Close" data-bind="click:$root.hideModal">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<span data-bind="text: modalBody"></span> You are about to book at
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-hollow btn-lg"
-							data-bind="click:$root.hideModal">Close</button>
-					<button type="button" class="btn btn-primary btn-lg"
-							data-bind="click:confirmBooking">Confirm</button>
-				</div>
-			</div>
-		</div>
-	</div>-->
-
  	<script src="./js/jquery-1.11.1.min.js"></script>
 	<script src="./js/bootstrap.min.js"></script>
 	<script src="./js/jquery-ui-1.11.1.min.js"></script>
@@ -155,6 +133,9 @@
     <script src="./js/knockout-bootstrap.min.js"></script>
 
 	<script>
+
+		var viewModel;
+
 		$(function() {
 			
 			// http://localhost:8080/HCI_Project/BookingPage.html?layoutID=1&arrangementID=1&conditionID=1&trialID=1
@@ -206,10 +187,15 @@
 				self.rooms = ko.observableArray();
 				self.lstDisplayDates=ko.observableArray();
 				self.timeSlot = ko.observableArray();
+				self.selectedTrial = ko.observable(selectedTrial);
 
 				self.modalBindingHeader=ko.observable('Confirm your booking?');
 				self.modalBindingBody = ko.observable('Oops error...');
 				self.modalBindingTemp = ko.observable();
+
+				self.correctTask = ko.observable(false);
+				self.completionCode = ko.observable(completionCode);
+				self.confirmClick = ko.observable(false);
 
 				self.openModal = function() {
 					self.modalBindingTemp(self.modalBindingBody());
@@ -297,8 +283,10 @@
 							&& value['slot']==selectedTrial["slot"]){
 						
 						//dialog box !!! and leads to completion
-
+						self.correctTask(true);
 						trialCompletion();
+					} else {
+						self.correctTask(false);
 					}
 				};
 				
@@ -310,7 +298,10 @@
 							&& parseInt(value['firstSlot'])<=parseInt(selectedTrial["slot"]) && parseInt(selectedTrial["slot"])<parseInt(value['lastSlot'])){
 						
 						//dialog box !!! and leads to completion
-						trialCompletion();
+						self.correctTask(true);
+
+					} else {
+						self.correctTask(false);
 					}
 				};
 	
@@ -453,7 +444,7 @@
 	 		
 			};
 			
-			var viewModel = new ViewModel();
+			viewModel = new ViewModel();
 		    ko.applyBindings(viewModel);
 
 		});
@@ -470,14 +461,24 @@
                     </button>
                 </div>
                 <div class="modal-body">
-					You are about to book
-					<div class="bold">
-						<span data-bind="text: room.name"></span>, <span data-bind="text: room.location"></span> (<span data-bind="text: room.capacity"></span> pax)
+					<div  data-bind="visible: viewModel.correctTask">
+
+						<div data-bind="visible: viewModel.confirmClick">
+							You are about to book
+							<div class="bold">
+								<span data-bind="text: room.name"></span>, <span data-bind="text: room.location"></span> (<span data-bind="text: room.capacity"></span> pax)
+							</div>
+							at <span data-bind="text: slot"></span>.
+						</div>
+
+
+						<div class="completion-box">
+							<strong>Copy the completion code below</strong> and <br> paste it on the survey form
+							<div class="completion-code"><span data-bind="text: viewModel.completionCode"></span></div>
+						</div>
 					</div>
-					at <span data-bind="text: slot"></span>.
-					<div class="completion-box">
-						<strong>Copy the completion code below</strong> and <br> paste it on the survey form
-						<div class="completion-code"><span>GERMANY</span></div>
+					<div data-bind="visible: !viewModel.correctTask()">
+						Sorry, try again
 					</div>
                 </div>
                 <div class="modal-footer">

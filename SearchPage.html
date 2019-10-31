@@ -15,6 +15,11 @@
 
 	<!--<h3 style="font-weight: bold;font-size:17px;display:inline-block;margin-bottom:10px;">Facility Booking System</h3>
 	<hr style="border-color: #b5b5b5;margin-bottom:8px;margin-top:0px;">-->
+
+    <div class="topbar">
+        <p>Please complete the following task:</p>
+        Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit more than <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
+    </div>
 	
 	<div class="main">
 		<div class="form-box search-box clearfix">
@@ -119,6 +124,7 @@
 			var arrangementID=parseInt(queryParams.get("arrangementID"));
 			var conditionID=parseInt(queryParams.get("conditionID"));
 			var trialID=parseInt(queryParams.get("trialID"));
+            var selectedTrial = GLOBAL_TRIALS[trialID-1];
 			
 			//verify parameters
 			if(isNaN(layoutID) || layoutID<1 || layoutID>2){
@@ -148,7 +154,8 @@
 				self.timeSlotSource = ko.observableArray(GLOBAL_TIMESLOTS);
 				self.selectedCapacity = ko.observable();
 				self.selectedTimeSlotFrom = ko.observable();
-				self.selectedTimeSlotTo = ko.observable()
+				self.selectedTimeSlotTo = ko.observable();
+				self.selectedTrial = ko.observable(selectedTrial);
 	
 				$('#dateInput').datepicker({dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE});
 		 		$('#dateInput').datepicker('setDate', GLOBAL_STARTDATE);

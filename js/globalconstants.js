@@ -30,9 +30,9 @@
 	
 	
 	var GLOBAL_TRIALS =[
-		{"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"11:00"},
-		{"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"16:00"},
-		{"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"21:00"},		
+		{"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"11:00", "endSlot":"12:00"},
+		{"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"16:00", "endSlot":"17:00"},
+		{"date":"2019-12-11","facility":"Conference Room","capacity":10, "slot":"21:00", "endSlot":"22:00"},
 	]; 
 
 	var GLOBAL_COMPLETION_CODES ={
