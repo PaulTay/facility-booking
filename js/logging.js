@@ -16,12 +16,12 @@
 
 var ENABLE_NETWORK_LOGGING = true; // Controls network logging.
 var ENABLE_CONSOLE_LOGGING = false; // Controls console logging.
-var LOG_VERSION = '0.1';           // Labels every entry with version: "0.1".
+var LOG_VERSION = '0.3';           // Labels every entry with version: "0.1".
 
 // These event types are intercepted for logging before jQuery handlers.
 var EVENT_TYPES_TO_LOG = {
-    //mousedown: true,
-    //keydown: true
+    mousedown: true,
+    keydown: true
 };
 
 // These event properties are copied to the log if present.
@@ -111,10 +111,27 @@ var loggingjs = (function() { // Immediately-Invoked Function Expression (IIFE);
         return localStorage['uid'];
     }
 
+    // parses and returns URL parameters
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
 // Log the given event.
     function logEvent(event, customName, customInfo) {
 
-        console.log('event', event, 'customName', customName, 'customInfo', customInfo);
+        //console.log('event', event, 'customName', customName, 'customInfo', customInfo);
+
+        var MID = getUrlVars()['MID'];
+        var layoutID = getUrlVars()['layoutID'];
+        var arrangementID = getUrlVars()['arrangementID'];
+        var conditionID = getUrlVars()['conditionID'];
+        var trialID = getUrlVars()['trialID'];
+        var noOfInputs = GLOBAL_ARRANGEMENTS[arrangementID][conditionID]['numOfInputs'];
+        var hasVisualAffordance = GLOBAL_ARRANGEMENTS[arrangementID][conditionID]['visualAffordance'];
 
         var time = (new Date).getTime();
         var eventName = customName || event.type;
@@ -136,10 +153,10 @@ var loggingjs = (function() { // Immediately-Invoked Function Expression (IIFE);
         var state = location.hash;
 
         if (ENABLE_CONSOLE_LOGGING) {
-            console.log(uid, time, eventName, target, info, state, LOG_VERSION);
+            console.log(uid, MID, layoutID, arrangementID, conditionID, trialID, noOfInputs, hasVisualAffordance, time, eventName, target, info, state, LOG_VERSION);
         }
         if (ENABLE_NETWORK_LOGGING) {
-            sendNetworkLog(uid, time, eventName, target, info, state, LOG_VERSION);
+            sendNetworkLog(uid, MID, layoutID, arrangementID, conditionID, trialID, noOfInputs, hasVisualAffordance, time, eventName, target, info, state, LOG_VERSION);
         }
     }
 
@@ -182,15 +199,29 @@ var loggingjs = (function() { // Immediately-Invoked Function Expression (IIFE);
 
 function sendNetworkLog(
     uid,
+    mid,
+    layoutid,
+    arrangementid,
+    conditionid,
+    trialid,
+    noofinputs,
+    hasvisualaffordance,
     time,
     eventname,
     target,
     info,
     state,
     log_version) {
-    var formid = "e/1FAIpQLSfB5mhBFFf6TMOj71enlTmG_AdxNwMf3A5Uzzn5HbVTEwnFJA";
+    var formid = "e/1FAIpQLScHfQ1fxk6sRXhLJ34pDFMP92swSgy56IsJW7FQIXYz4BXCog";
     var data = {
         "entry.637692028": uid,
+        "entry.192166559": mid,
+        "entry.128687374": layoutid,
+        "entry.778935842": arrangementid,
+        "entry.1148870125": conditionid,
+        "entry.1530694899": trialid,
+        "entry.1666418303": noofinputs,
+        "entry.735971900": hasvisualaffordance,
         "entry.917098513": time,
         "entry.912431598": eventname,
         "entry.1907460735": target,

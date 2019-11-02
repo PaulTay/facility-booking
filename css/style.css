@@ -354,7 +354,7 @@ li.active > a[role=tab]{
     border-bottom: 5px dashed #000;
 }
 .topbar {
-    background-color: #ffe000;
+    background-color: #365cd2;
     display: block;
     padding: 20px;
     position: fixed;
@@ -362,6 +362,6 @@ li.active > a[role=tab]{
     margin-bottom: 30px;
     top: 0;
     font-size: 16px;
-    color: #031759;
+    color: #fff;
     z-index:999;
 }

@@ -9,115 +9,115 @@
 	<link rel="stylesheet" type="text/css"href="css/style.css" />
 </head>
 
-<body data-bind="click:trackClick">
+<body>
 	<div class="topbar">
 		<p>Please complete the following task:</p>
 		Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
 	</div>
 	<div class="booking-wrapper">
-		<table style="display: inline-block">
-			<tr>
-				<td>
-					<!-- ALIGNED LAYOUT -->
-					<div id="tabsDiv" style="width:900px;display:none;" data-bind="visible:layout()=='ALIGNED_TIMESLOT' ">
-						  <!-- Nav tabs -->
-						  <ul id="myTabs" class="nav nav-tabs" role="tablist" data-bind="foreach:lstDisplayDates">
-						  		<li role="presentation" ><a href="#timeslot_tab" role="tab" data-toggle="tab" data-bind="text:$data"></a></li>
-						  </ul>
-				     	
-				     	 <!-- Tab panes -->
-						 <div id="tabContentDiv" class="tab-content">
-						 	<div role="tabpanel" class="tab-pane active" id="timeslot_tab">
-						 		<div id="alignedTimeSlotDiv" class="timeslot-wrapper">
-							    	<table id="alignedTimeSlotTable" class="timeSlotLayout">
-										<thead>
+		<table style="display: inline-block" data-bind="click: trackClick">
+				<tr>
+					<td>
+						<!-- ALIGNED LAYOUT -->
+						<div id="tabsDiv" style="width:900px;display:none;" data-bind="visible:layout()=='ALIGNED_TIMESLOT' ">
+							<!-- Nav tabs -->
+							<ul id="myTabs" class="nav nav-tabs" role="tablist" data-bind="foreach:lstDisplayDates">
+								<li role="presentation" ><a href="#timeslot_tab" role="tab" data-toggle="tab" data-bind="text:$data"></a></li>
+							</ul>
+
+							<!-- Tab panes -->
+							<div id="tabContentDiv" class="tab-content">
+								<div role="tabpanel" class="tab-pane active" id="timeslot_tab">
+									<div id="alignedTimeSlotDiv" class="timeslot-wrapper">
+										<table id="alignedTimeSlotTable" class="timeSlotLayout">
+											<thead>
 											<tr>
 												<th style="width:100px;background-color:white;"></th>
 												<!-- ko foreach:rooms -->
-													<th style="font-weight:bold;width:220px;font-size: 15px;">
-														<span data-bind="text:name" class="facility-name"></span><br>
-														<span data-bind="text:location"></span><br>
-														<span data-bind="text:'(for '+capacity+' pax)'"></span>
-													</th>
+												<th style="font-weight:bold;width:220px;font-size: 15px;">
+													<span data-bind="text:name" class="facility-name"></span><br>
+													<span data-bind="text:location"></span><br>
+													<span data-bind="text:'(for '+capacity+' pax)'"></span>
+												</th>
 												<!-- /ko -->
 											</tr>
-										</thead>
-										<tbody data-bind="foreach:lstAlignedTimeSlotLayout">
+											</thead>
+											<tbody data-bind="foreach:lstAlignedTimeSlotLayout">
 											<tr>
 												<td data-bind="text:firstSlot" class="slot"></td>
 												<!-- ko foreach : events -->
 
-													<!-- ko if: bookStatus -->
-													<td data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance}">Not available</td>
-													<!-- /ko -->
+												<!-- ko if: bookStatus -->
+												<td data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance}">Not available</td>
+												<!-- /ko -->
 
-													<!-- ko if: !bookStatus -->
-													<td	data-toggle="modal" data-target="#slotClickTemplate"
-														data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance},
+												<!-- ko if: !bookStatus -->
+												<td	data-toggle="modal" data-target="#slotClickTemplate"
+													   data-bind="css:{slotBooked:bookStatus, visualAffordance:$root.visualAffordance},
 														style:{cursor:($root.visualAffordance()?'pointer':'')},
 														click: $root.timeSlotClicked"></td>
-													<!-- /ko -->
+												<!-- /ko -->
 
 												<!-- /ko -->
 											</tr>
-										</tbody>
-									</table>
-						 		</div>
-						 	</div>
-						 </div>	
-			  		</div>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
 
 
-  		
-  					<!-- NOT ALIGNED LAYOUT -->
-			  		<div style="display:none;" data-bind="visible:layout()=='NOTALIGNED_TIMESLOT' ">
-				  		<div id="notAlignedTimeSlotDiv" class="timeslot-wrapper">
-							<table id="notAlignedTimeSlotTable" class="timeSlotLayout" style="min-width:600px">
-								<thead>
+
+						<!-- NOT ALIGNED LAYOUT -->
+						<div style="display:none;" data-bind="visible:layout()=='NOTALIGNED_TIMESLOT' ">
+							<div id="notAlignedTimeSlotDiv" class="timeslot-wrapper">
+								<table id="notAlignedTimeSlotTable" class="timeSlotLayout" style="min-width:600px">
+									<thead>
 									<tr>
 										<th></th>
 										<!-- ko foreach:lstDisplayDates-->
-											<th style="font-weight:bold;width:200px;font-size: 15px;" data-bind="text:$data"></th>
+										<th style="font-weight:bold;width:200px;font-size: 15px;" data-bind="text:$data"></th>
 										<!-- /ko -->
 									</tr>
-								</thead>
-								<tbody data-bind="foreach:lstNotAlignedTimeSlotLayout">
+									</thead>
+									<tbody data-bind="foreach:lstNotAlignedTimeSlotLayout">
 									<tr>
 										<td data-bind="with:room" style="font-weight:bold;padding-top:10px;padding-left:10px;padding-right:20px;vertical-align:top;font-size: 15px;">
 											<span data-bind="text:name" class="facility-name"></span><br>
 											<span data-bind="text:location"></span><br>
 											<span data-bind="text:'(for '+capacity+' pax)'"></span>
 										</td>
-										
+
 										<!-- ko foreach: events-->
-											<td style="vertical-align:top;">
-												<!-- ko foreach: $data -->
-													<!-- ko if: bookStatus -->
-													<div class="timeslot-cell"
-														data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance},
+										<td style="vertical-align:top;">
+											<!-- ko foreach: $data -->
+											<!-- ko if: bookStatus -->
+											<div class="timeslot-cell"
+												 data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance},
 														text:'Not Available\n'+ '('+firstSlot+'-'+lastSlot+')'" >
-													</div>
-													<!-- /ko -->
-													<!-- ko if: !bookStatus -->
-													
-													<div class="timeslot-cell" data-toggle="modal" data-target="#slotClickTemplate"
-														data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance},
+											</div>
+											<!-- /ko -->
+											<!-- ko if: !bookStatus -->
+
+											<div class="timeslot-cell" data-toggle="modal" data-target="#slotClickTemplate"
+												 data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance},
 														style:{cursor:($root.visualAffordance()?'pointer':'')},
 														text:'Available\n'+ '('+firstSlot+'-'+lastSlot+')',
 														click:$root.timeSlotClicked" >
-													</div>
-													<!-- /ko -->
-												<!-- /ko -->
-											</td>
+											</div>
+											<!-- /ko -->
+											<!-- /ko -->
+										</td>
 										<!-- /ko -->
 									</tr>
-								</tbody>
-							</table>
-					    </div>	
-		  			</div>	
-	  			</td>
-  			</tr>	
-  		 </table> 		
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
 	</div>
 
 
@@ -127,9 +127,9 @@
 	<div class="modal fade" id="slotClickTemplate" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" data-bind="visible:!viewModel.correctTask()" >
                     <h3 class="modal-title">Confirm your booking?</h3>
-                    <button type="button" class="close" aria-label="Close" data-dismiss="modal">
+                    <button type="button" class="close" aria-label="Close" data-dismiss="modal" data-bind="click: trackClick">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -151,9 +151,9 @@
 					</div>
 					<div data-bind="visible:viewModel.secondStage()">
 						<div data-bind="visible:viewModel.correctTask()" > 
-							Good job, you have selected a correct time slot.
+							Good job! You have selected the correct time slot.
 							<div class="completion-box">
-								<strong>Please copy the completion code below</strong> and <br> paste it on the survey form
+								<strong>Please copy the completion code below</strong> and <br> paste it on the survey form to proceed
 								<div class="completion-code"><span data-bind="text: viewModel.completionCode"></span></div>
 							</div>
 						</div>
@@ -164,7 +164,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-hollow btn-lg"
-                            data-dismiss="modal", data-bind="visible: !viewModel.correctTask()">Close</button>
+                            data-dismiss="modal", data-bind="visible: !viewModel.correctTask(), click: trackClick">Close</button>
                     <button type="button" class="btn btn-primary btn-lg"
                             data-bind="click: viewModel.confirmBooking, visible:!viewModel.correctTask() && !viewModel.secondStage()">Confirm</button>
                 </div>
@@ -210,7 +210,7 @@
 			
 
 			if(MID==null || MID.length==0){
-				alert("No MID, please include MID in your url");
+				alert("Error: Missing MTurk ID. Kindly contact us if you encounter this error message.");
 				return;
 			}
 			console.log("MID = "+MID);
@@ -382,6 +382,7 @@
 				self.correctTask = ko.observable(false);
 				self.completionCode = ko.observable(completionCode);
 				self.confirmBooking=function(){
+					self.trackClick();
 					var selectedDate = null;
 					var selectedSlot = null;
 					if(self.layout()=="ALIGNED_TIMESLOT"){
@@ -411,18 +412,24 @@
 				var numOfClicks = 0 ;
 				self.trackClick=function(){
 					numOfClicks++;
+					console.log("Track click: " + numOfClicks);
 				};
 				
 				var startTime = new Date().getTime();
+				console.info('Start time: ', startTime)
+
 				function saveToLoggingJS(){
 					var endTime = new Date().getTime();
-					var totalTimeTaken = Math.round((endTime - startTime)/1000);
-					console.log(totalTimeTaken+" sec");
+
+					var totalTimeTaken = endTime - startTime;
+
+					console.info('End time: ', endTime, 'Total time taken: ', totalTimeTaken);
+
+					console.log(totalTimeTaken+" ms");
 					console.log(numOfClicks+" clicks");
-					loggingjs.logEvent(null, 'BookingPage', {
+					loggingjs.logEvent(null, 'Submit Booking', {
 						eventName: 'Booked Successful',
-						info: {'MID':MID, 'layoutID':layoutID, 'arrangementID':arrangementID, 'conditionID':conditionID, 'trialID':trialID,
-							'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken, }
+						info: {'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken }
 					});	
 				}
 				

@@ -241,10 +241,9 @@
 					console.log(totalTimeTaken+" sec");
 					console.log(numOfClicks+" clicks");
 					
-					loggingjs.logEvent(null, 'SearchPage', {
+					loggingjs.logEvent(null, 'Submit Search', {
 						eventName: 'Submit search successful',
-						info: {'MID':MID, 'layoutID':layoutID, 'arrangementID':arrangementID, 'conditionID':conditionID, 'trialID':trialID,
-							'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken, }
+						info: {'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken, }
 					});
 				}
 				
