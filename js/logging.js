@@ -130,8 +130,8 @@ var loggingjs = (function() { // Immediately-Invoked Function Expression (IIFE);
         var arrangementID = getUrlVars()['arrangementID'];
         var conditionID = getUrlVars()['conditionID'];
         var trialID = getUrlVars()['trialID'];
-        var noOfInputs = GLOBAL_ARRANGEMENTS[arrangementID][conditionID]['numOfInputs'];
-        var hasVisualAffordance = GLOBAL_ARRANGEMENTS[arrangementID][conditionID]['visualAffordance'];
+        var noOfInputs = GLOBAL_ARRANGEMENTS[arrangementID - 1][conditionID - 1]['numOfInputs'] || '';
+        var hasVisualAffordance = GLOBAL_ARRANGEMENTS[arrangementID - 1][conditionID - 1]['visualAffordance'];
 
         var time = (new Date).getTime();
         var eventName = customName || event.type;
