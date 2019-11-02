@@ -103,7 +103,7 @@
 													<div class="timeslot-cell" data-toggle="modal" data-target="#slotClickTemplate"
 														data-bind="css:{slotBooked:bookStatus,visualAffordance:$root.visualAffordance},
 														style:{cursor:($root.visualAffordance()?'pointer':'')},
-														text:'Not Available\n'+ '('+firstSlot+'-'+lastSlot+')',
+														text:'Available\n'+ '('+firstSlot+'-'+lastSlot+')',
 														click:$root.timeSlotClicked" >
 													</div>
 													<!-- /ko -->
@@ -241,6 +241,10 @@
 				window.open("./SearchPage.html?"+$.param(paramObj), '_self');
 			}
 			
+			function pad(num, size) {
+			    var s = "000000000" + num;
+			    return s.substr(s.length-size);
+			}
 			var ViewModel = function() {
 				var self = this;
 				var selectedLayout = GLOBAL_LAYOUTS[layoutID-1];
@@ -300,7 +304,7 @@
 					var date = parsedDateInput.getDate();
 					var day = days[parsedDateInput.getDay()];
 					var month = months[parsedDateInput.getMonth()];
-					var displayDate = day+", "+date+" "+month;
+					var displayDate = dateInput.toString('yyyy-MM-dd');
 					self.lstDisplayDates([displayDate]);
 					self.timeSlot(GLOBAL_TIMESLOTS);
 					dayStart = parsedDateInput.getDay();
@@ -326,7 +330,7 @@
 						var date = newDate.getDate();
 						var day = days[newDate.getDay()];
 						var month = months[newDate.getMonth()];
-						var displayDate = day+", "+date+" "+month;
+						var displayDate = newDate.toString('yyyy-MM-dd');
 						lstDisplayDates.push(displayDate);
 						displayAndRealDateMap[displayDate] = newDate.toString('yyyy-MM-dd');
 					}
