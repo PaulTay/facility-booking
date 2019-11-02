@@ -74,10 +74,10 @@
 			</div>
 			<div class="form-group no-border row" data-bind="visible:numOfInputs()==6">
 				<div class="col-sm-4 split-group left">
-					<label for="dateTo" class="required">End time</label>
+					<label for="timeTo" class="required">End time</label>
 				</div>
 				<div class="col-sm-8 split-group right">
-					<select id="timeFrom" style="width: 100%"
+					<select id="timeTo" style="width: 100%"
 							data-bind="options: timeSlotSource, optionsCaption:'Select end time', value: selectedTimeSlotTo"></select>
 				</div>
 			</div>
@@ -164,7 +164,12 @@
 				self.selectedTimeSlotTo = ko.observable();
 				self.selectedTrial = ko.observable(selectedTrial);
 	
-				$('#dateInput').datepicker({dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE});
+				$('#dateInput').datepicker({
+					dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE,
+					onSelect: function() {
+						self.trackClick();
+					}
+				});
 		 		$('#dateInput').datepicker('setDate', GLOBAL_STARTDATE);
 	
 		 		$('#dateFrom').datepicker({dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE});
@@ -172,8 +177,6 @@
 		 		
 				$('#dateTo').datepicker({dateFormat: "yy-mm-dd", minDate:GLOBAL_STARTDATE, maxDate:GLOBAL_ENDDATE});
 			    $('#dateTo').datepicker('setDate', GLOBAL_ENDDATE);
-			    
-			    
 			   
 				self.searchButton = function(){
 					//verify selections
@@ -249,11 +252,16 @@
 				
 				self.trackClick=function(){
 					numOfClicks++;
+					console.info('track click: ', numOfClicks);
 				}; 
 			};
 			
 			 var viewModel = new ViewModel();
 		     ko.applyBindings(viewModel);
+
+		     $('#capacity, #dateFrom, #dateTo, #dateInput, #timeFrom, #timeTo').change(function() {
+		     	viewModel. trackClick();
+			 })
 		});
 
 	</script>
