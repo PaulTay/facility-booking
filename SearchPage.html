@@ -232,7 +232,9 @@
 					localStorage.setItem("searchObject", JSON.stringify(searchObject));	
 					
 					var paramObj = {'MID':MID, 'layoutID': layoutID, 'arrangementID': arrangementID,'conditionID': conditionID, 'trialID': trialID};
-					window.open("./BookingPage.html?"+$.param(paramObj), '_self');
+					setTimeout(function() {
+						window.open("./BookingPage.html?" + $.param(paramObj), '_self');
+					}, 500);
 				};
 
 				
@@ -240,8 +242,8 @@
 				var startTime = new Date().getTime();
 				function saveToLoggingJS(){
 					var endTime = new Date().getTime();
-					var totalTimeTaken = Math.round((endTime - startTime)/1000);
-					console.log(totalTimeTaken+" sec");
+					var totalTimeTaken = endTime - startTime;
+					console.log(totalTimeTaken+" ms");
 					console.log(numOfClicks+" clicks");
 					
 					loggingjs.logEvent(null, 'Submit Search', {
@@ -260,8 +262,8 @@
 		     ko.applyBindings(viewModel);
 
 		     $('#capacity, #dateFrom, #dateTo, #dateInput, #timeFrom, #timeTo').change(function() {
-		     	viewModel. trackClick();
-			 })
+		     	viewModel.trackClick();
+			 });
 		});
 
 	</script>
