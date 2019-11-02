@@ -15,7 +15,8 @@
 		Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
 	</div>
 	<div class="booking-wrapper">
-		<table style="display: inline-block" data-bind="click: trackClick">
+		<div style="overflow-x: scroll">
+			<table style="display: inline-block" data-bind="click: trackClick">
 				<tr>
 					<td>
 						<!-- ALIGNED LAYOUT -->
@@ -118,6 +119,7 @@
 					</td>
 				</tr>
 			</table>
+		</div>
 	</div>
 
 
