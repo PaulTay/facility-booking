@@ -384,3 +384,59 @@ a.back-btn:hover {
 a.back-btn span {
     margin-right: 10px;
 }
+
+.content {
+    background-color: #fff;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: left;
+    padding: 30px 5%;
+    box-shadow: 0 3px 15px rgba(51, 51, 51, 0.2);
+}
+.content p, .content ul li {
+    font-size: 17px;
+    line-height: 2.9rem;
+}
+.content a {
+    color: #032CA6;
+}
+.content ol {
+    padding-left: 30px;
+    margin-top: 50px;
+}
+.content ol > li {
+    font-size: 22px;
+    margin-bottom: 4rem;
+    padding-left: 20px;
+}
+.content h3 {
+    margin-bottom: 2.5rem;
+    line-height: 3.2rem;
+    color: #031759;
+    font-weight: 700;
+}
+.content h4 {
+    font-weight: 700;
+    margin-top: 3rem;
+}
+.content h6 {
+    font-size: 14px;
+    margin-bottom: 30px;
+    color: #666;
+}
+.pink {
+    color: #f25ca1;
+}
+.alert-warning {
+    color: #b91360;
+    border-color: #b91360;
+    background-color: #f1dee6;
+    padding: 20px 30px;
+    border: none;
+}
+.alert-warning p {
+    border-left: 4px solid;
+    margin-top: 20px;
+    padding: 10px 20px;
+}
