@@ -19,6 +19,12 @@
 			<table style="display: inline-block" data-bind="click: trackClick">
 				<tr>
 					<td>
+						<button type="button" class="btn btn-primary btn-lg btn-block btn-search"
+						data-bind="click:returnPage">Back To Search Page</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
 						<!-- ALIGNED LAYOUT -->
 						<div id="tabsDiv" style="width:900px;display:none;" data-bind="visible:layout()=='ALIGNED_TIMESLOT' ">
 							<!-- Nav tabs -->
@@ -160,7 +166,7 @@
 							</div>
 						</div>
 						<div data-bind="visible:!viewModel.correctTask()">
-							You have selected a wrong time slot, please select according to above mentioned task.
+							You have selected a wrong facility or timeslot, please select according to above mentioned task.
 						</div>
 					</div>
                 </div>
@@ -238,7 +244,9 @@
 			}
 			
 			function searchPageRedirect(errorMessage){
-				alert(errorMessage);
+				if(errorMessage!=null){
+					alert(errorMessage);
+				}
 				var paramObj = {'MID':MID, 'layoutID': layoutID, 'arrangementID': arrangementID,'conditionID': conditionID, 'trialID': trialID};
 				window.open("./SearchPage.html?"+$.param(paramObj), '_self');
 			}
@@ -274,15 +282,18 @@
 				var dateTo = searchObject['dateTo'];
 				var timeslotFrom = searchObject['timeslotFrom'];
 				var timeslotTo = searchObject['timeslotTo'];
+				var numOfClicksFromSearchPage = parseInt(searchObject['numOfClicks']);
+				var totalTimeTakenFromSearchPage = parseInt(searchObject['totalTimeTaken']);
 
 				self.rooms = ko.observableArray();
 				self.lstDisplayDates=ko.observableArray();
 				self.timeSlot = ko.observableArray();
 				self.selectedTrial = ko.observable(selectedTrial);
 
+				self.returnPage=function(){
+					searchPageRedirect(null);
+				};
 				
-				
-
 
 				var rooms = [];
 				var rawRooms = GLOBAL_ROOMS[facility+"_"+capacity];
@@ -402,7 +413,7 @@
 					self.secondStage(true);
 					if(selectedTrial["date"]==selectedDate
 						&& selectedTrial["facility"]==self.selectedSlot()['room']['facility']
-						&& selectedTrial["capacity"]==self.selectedSlot()['room']['capacity']
+						&& selectedTrial["capacity"]<=self.selectedSlot()['room']['capacity']
 						&& selectedTrial["slot"] ==selectedSlot){
 						self.correctTask(true);
 						saveToLoggingJS();
@@ -422,9 +433,7 @@
 
 				function saveToLoggingJS(){
 					var endTime = new Date().getTime();
-
 					var totalTimeTaken = endTime - startTime;
-
 					console.info('End time: ', endTime, 'Total time taken: ', totalTimeTaken);
 
 					console.log(totalTimeTaken+" ms");
@@ -432,6 +441,11 @@
 					loggingjs.logEvent(null, 'Submit Booking', {
 						eventName: 'Booked Successful',
 						info: {'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken }
+					});	
+
+					loggingjs.logEvent(null, 'Trial Completion', {
+						eventName: 'Trial Successful',
+						info: {'numOfClicks': numOfClicksFromSearchPage+numOfClicks, 'totalTimeTaken': totalTimeTakenFromSearchPage+totalTimeTaken }
 					});	
 				}
 				
