@@ -16,7 +16,7 @@
 
 var ENABLE_NETWORK_LOGGING = true; // Controls network logging.
 var ENABLE_CONSOLE_LOGGING = false; // Controls console logging.
-var LOG_VERSION = '0.3';           // Labels every entry with version: "0.1".
+var LOG_VERSION = '0.4';           // Labels every entry with version: "0.1".
 
 // These event types are intercepted for logging before jQuery handlers.
 var EVENT_TYPES_TO_LOG = {
@@ -218,12 +218,11 @@ function sendNetworkLog(
     eventname,
     target,
     info,
-    numOfClicks,
-    totalTimeTaken,
+    numofclicks,
+    totaltimetaken,
     state,
     log_version) {
-
-    var formid = "e/1FAIpQLScHfQ1fxk6sRXhLJ34pDFMP92swSgy56IsJW7FQIXYz4BXCog";
+    var formid = "e/1FAIpQLSfOzoz98BuQJCVclFTkXT9BwHjTZbzYuJKopKoyWnpz1OVovw";
     var data = {
         "entry.637692028": uid,
         "entry.192166559": mid,
@@ -237,8 +236,8 @@ function sendNetworkLog(
         "entry.912431598": eventname,
         "entry.1907460735": target,
         "entry.1351555139": info,
-        "":numOfClicks,
-        "":totalTimeTaken,
+        "entry.1920845314": numofclicks,
+        "entry.140721664": totaltimetaken,
         "entry.104031422": state,
         "entry.628510319": log_version
     };
