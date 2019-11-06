@@ -156,7 +156,15 @@ var loggingjs = (function() { // Immediately-Invoked Function Expression (IIFE);
             console.log(uid, MID, layoutID, arrangementID, conditionID, trialID, noOfInputs, hasVisualAffordance, time, eventName, target, info, state, LOG_VERSION);
         }
         if (ENABLE_NETWORK_LOGGING) {
-            sendNetworkLog(uid, MID, layoutID, arrangementID, conditionID, trialID, noOfInputs, hasVisualAffordance, time, eventName, target, info, state, LOG_VERSION);
+        	var numOfClicks= "";
+        	var totalTimeTaken= "";
+        	var json_info=JSON.parse(info)
+        	if(json_info['info']){
+        		numOfClicks= json_info['info']['numOfClicks'];
+        		totalTimeTaken= json_info['info']['totalTimeTaken'];
+        	}
+            sendNetworkLog(uid, MID, layoutID, arrangementID, conditionID, trialID, noOfInputs, hasVisualAffordance, 
+            		time, eventName, target, info, numOfClicks, totalTimeTaken, state, LOG_VERSION);
         }
     }
 
@@ -210,8 +218,11 @@ function sendNetworkLog(
     eventname,
     target,
     info,
+    numOfClicks,
+    totalTimeTaken,
     state,
     log_version) {
+
     var formid = "e/1FAIpQLScHfQ1fxk6sRXhLJ34pDFMP92swSgy56IsJW7FQIXYz4BXCog";
     var data = {
         "entry.637692028": uid,
@@ -226,6 +237,8 @@ function sendNetworkLog(
         "entry.912431598": eventname,
         "entry.1907460735": target,
         "entry.1351555139": info,
+        "":numOfClicks,
+        "":totalTimeTaken,
         "entry.104031422": state,
         "entry.628510319": log_version
     };
