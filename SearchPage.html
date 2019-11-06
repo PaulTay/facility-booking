@@ -13,8 +13,10 @@
 <body data-bind="click:trackClick">
 
     <div class="topbar">
-        <p>Please complete the following task:</p>
-        Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
+		<div class="task-wrapper">
+			<p>Please complete the following task:</p>
+			Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
+		</div>
     </div>
 	
 	<div class="main">

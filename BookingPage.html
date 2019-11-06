@@ -9,20 +9,19 @@
 	<link rel="stylesheet" type="text/css"href="css/style.css" />
 </head>
 
-<body>
+<body style="padding-top: 180px;">
 	<div class="topbar">
-		<p>Please complete the following task:</p>
-		Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
+		<div class="task-wrapper">
+			<p>Please complete the following task:</p>
+			Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
+		</div>
+		<div class="navbar">
+			<a href="#" class="back-btn" data-bind="click:returnPage"><span>‹</span> Back to search</a>
+		</div>
 	</div>
 	<div class="booking-wrapper">
 		<div style="overflow-x: scroll">
 			<table style="display: inline-block" data-bind="click: trackClick">
-				<tr>
-					<td>
-						<button type="button" class="btn btn-primary btn-lg btn-block btn-search"
-						data-bind="click:returnPage">Back To Search Page</button>
-					</td>
-				</tr>
 				<tr>
 					<td>
 						<!-- ALIGNED LAYOUT -->

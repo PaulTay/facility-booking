@@ -356,7 +356,6 @@ li.active > a[role=tab]{
 .topbar {
     background-color: #365cd2;
     display: block;
-    padding: 20px;
     position: fixed;
     width: 100%;
     margin-bottom: 30px;
@@ -364,4 +363,24 @@ li.active > a[role=tab]{
     font-size: 16px;
     color: #fff;
     z-index:999;
+}
+.task-wrapper {
+    padding: 20px;
+}
+.navbar {
+    background-color: #2c2c2f;
+    margin-bottom: 0;
+    padding: 15px 20px;
+    text-align: left;
+}
+a.back-btn {
+    text-align: left;
+    color: #fff;
+    text-decoration: none;
+}
+a.back-btn:hover {
+    opacity: .89;
+}
+a.back-btn span {
+    margin-right: 10px;
 }
