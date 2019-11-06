@@ -14,7 +14,7 @@
 
     <div class="topbar">
         <p>Please complete the following task:</p>
-        Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit more than <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
+        Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
     </div>
 	
 	<div class="main">
@@ -227,28 +227,30 @@
 					saveToLoggingJS();
 					var searchObject = {"facility":selectedFacility, "capacity":selectedCapacity,
 							"dateInput":selectedDateInput, "dateFrom":selectedDateFrom, "dateTo":selectedDateTo,
-							"timeslotFrom":selectedTimeSlotFrom, "timeslotTo":selectedTimeSlotTo};
+							"timeslotFrom":selectedTimeSlotFrom, "timeslotTo":selectedTimeSlotTo,'numOfClicks':numOfClicks,'totalTimeTaken':totalTimeTaken };
 					localStorage.removeItem("searchObject");
 					localStorage.setItem("searchObject", JSON.stringify(searchObject));	
+					
 					
 					var paramObj = {'MID':MID, 'layoutID': layoutID, 'arrangementID': arrangementID,'conditionID': conditionID, 'trialID': trialID};
 					setTimeout(function() {
 						window.open("./BookingPage.html?" + $.param(paramObj), '_self');
-					}, 500);
+					}, 1000);
 				};
 
 				
 			    var numOfClicks = 0;
 				var startTime = new Date().getTime();
+				var totalTimeTaken = 0;
 				function saveToLoggingJS(){
 					var endTime = new Date().getTime();
-					var totalTimeTaken = endTime - startTime;
+					totalTimeTaken = endTime - startTime;
 					console.log(totalTimeTaken+" ms");
 					console.log(numOfClicks+" clicks");
-					
+
 					loggingjs.logEvent(null, 'Submit Search', {
 						eventName: 'Submit search successful',
-						info: {'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken, }
+						info: {'numOfClicks': numOfClicks, 'totalTimeTaken': totalTimeTaken}
 					});
 				}
 				
