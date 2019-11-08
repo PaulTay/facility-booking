@@ -16,7 +16,7 @@
 
 var ENABLE_NETWORK_LOGGING = true; // Controls network logging.
 var ENABLE_CONSOLE_LOGGING = false; // Controls console logging.
-var LOG_VERSION = '0.4';           // Labels every entry with version: "0.1".
+var LOG_VERSION = '1.0';           // Labels every entry with version: "0.1".
 
 // These event types are intercepted for logging before jQuery handlers.
 var EVENT_TYPES_TO_LOG = {
