@@ -297,9 +297,13 @@ table.timeSlotLayout {
     font-size: 25px;
     text-align: center;
     display: block;
+    color: #333;
 }
 .visualAffordance:not(.slotBooked):hover {
     background-color: #032CA6;
+    color: #fff;
+}
+.visualAffordance:not(.slotBooked):hover:before {
     color: #fff;
 }
 .timeslot-cell.visualAffordance {
