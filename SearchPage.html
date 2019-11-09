@@ -116,15 +116,13 @@
 	
 	<script>
 		$(function() {
-			// http://localhost:8080/HCI_Project/SearchPage.html?layoutID=1&arrangementID=1&conditionID=1&trialID=1&MID=Test
+			// http://localhost:8080/HCI_Project/SearchPage.html?layoutID=1&arrangementID=1&conditionID=1&trialID=1
 			var queryParams = new URLSearchParams(window.location.search);
 			var MID=queryParams.get("MID");
 			var layoutID=parseInt(queryParams.get("layoutID"));
 			var arrangementID=parseInt(queryParams.get("arrangementID"));
 			var conditionID=parseInt(queryParams.get("conditionID"));
 			var trialID=parseInt(queryParams.get("trialID"));
-			var accumulatedTime= parseInt(queryParams.get("accumulatedTime"));
-			var accumulatedClicks= parseInt(queryParams.get("accumulatedClicks"));
             var selectedTrial = GLOBAL_TRIALS[trialID-1];
 			
             if(MID==null || MID.length==0){
@@ -219,11 +217,11 @@
 						var selectedTimeSlotFrom = self.selectedTimeSlotFrom();
 						var selectedTimeSlotTo = self.selectedTimeSlotTo();
 						if(!selectedTimeSlotFrom || !selectedTimeSlotFrom ){
-							alert("Please select both \"Start Time\" and \"End Time\".");
+							alert("Please select both time slots.");
 							return;
 						}
 						if(parseInt(selectedTimeSlotTo) <= parseInt(selectedTimeSlotFrom)){
-							alert("Invalid TimeSlot selection.\n\"Start Time\" must be earlier than \"End Time\".");
+							alert("Invalid Timeslot selection.\n\"Timeslot From\" must be earlier than \"Timeslot To\".");
 							return;
 						}
 					}
@@ -243,12 +241,12 @@
 				};
 
 				
-			    var numOfClicks = isNaN(accumulatedClicks)?0:accumulatedClicks;
+			    var numOfClicks = 0;
 				var startTime = new Date().getTime();
-				var totalTimeTaken = isNaN(accumulatedTime)?0:accumulatedTime;
+				var totalTimeTaken = 0;
 				function saveToLoggingJS(){
 					var endTime = new Date().getTime();
-					totalTimeTaken = totalTimeTaken + (endTime - startTime);
+					totalTimeTaken = endTime - startTime;
 					console.log(totalTimeTaken+" ms");
 					console.log(numOfClicks+" clicks");
 
