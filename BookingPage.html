@@ -16,7 +16,7 @@
 			Book a <span class="bold" data-bind="text: selectedTrial().facility"></span> that can fit <span class="bold" data-bind="text: selectedTrial().capacity"></span> people on <span class="bold" data-bind="text: selectedTrial().date"></span>, from <span class="bold" data-bind="text: selectedTrial().slot"></span> - <span class="bold" data-bind="text: selectedTrial().endSlot"></span>.
 		</div>
 		<div class="navbar">
-			<a href="#" class="back-btn" data-bind="click:returnPage"><span></span> Back to search</a>
+			<a href="#" class="back-btn" data-bind="click:returnPage"><span>‹</span> Back to search</a>
 		</div>
 	</div>
 	<div class="booking-wrapper">
@@ -165,7 +165,7 @@
 							</div>
 						</div>
 						<div data-bind="visible:!viewModel.correctTask()">
-							You have either selected a wrong facility, capacity or timeslot.<br>Please select according to above mentioned task.
+							You have selected a wrong facility or timeslot, please select according to above mentioned task.
 						</div>
 					</div>
                 </div>
@@ -207,7 +207,7 @@
 
 		$(function() {
 			
-			// http://localhost:8080/HCI_Project/BookingPage.html?layoutID=1&arrangementID=1&conditionID=1&trialID=1&MID=Test
+			// http://localhost:8080/HCI_Project/BookingPage.html?layoutID=1&arrangementID=1&conditionID=1&trialID=1
 			var queryParams = new URLSearchParams(window.location.search);
 			var MID=queryParams.get("MID");
 			var layoutID=parseInt(queryParams.get("layoutID"));
@@ -243,7 +243,9 @@
 			}
 			
 			function searchPageRedirect(errorMessage){
-				alert(errorMessage);
+				if(errorMessage!=null){
+					alert(errorMessage);
+				}
 				var paramObj = {'MID':MID, 'layoutID': layoutID, 'arrangementID': arrangementID,'conditionID': conditionID, 'trialID': trialID};
 				window.open("./SearchPage.html?"+$.param(paramObj), '_self');
 			}
@@ -288,14 +290,7 @@
 				self.selectedTrial = ko.observable(selectedTrial);
 
 				self.returnPage=function(){
-					var endTime = new Date().getTime();
-					var totalTimeTaken = endTime - startTime;
-					var accumulatedTime = totalTimeTakenFromSearchPage + totalTimeTaken;
-					var accumulatedClicks = numOfClicksFromSearchPage + numOfClicks;
-					
-					var paramObj = {'MID':MID, 'layoutID': layoutID, 'arrangementID': arrangementID,'conditionID': conditionID, 'trialID': trialID,
-							'accumulatedTime':accumulatedTime, 'accumulatedClicks':accumulatedClicks};
-					window.open("./SearchPage.html?"+$.param(paramObj), '_self');
+					searchPageRedirect(null);
 				};
 				
 
